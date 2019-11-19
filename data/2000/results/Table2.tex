@@ -1,0 +1,36 @@
+\documentclass{article}
+\usepackage{geometry}[margin = 2.5 cm]
+\usepackage{color}
+\usepackage{booktabs}
+\usepackage{multirow}
+
+
+\begin{document}
+\section{table 2}
+\begin{tabular}{l*{3}{c}}
+\toprule
+                &\multicolumn{1}{c}{Oil and Gas Extraction}&\multicolumn{1}{c}{Motor Vehicles}&\multicolumn{1}{c}{Bartik}\\
+\midrule
+Male            &    0.514&    1.453&   -0.195\\
+                &  (0.166)&  (1.239)&  (0.078)\\
+White           &   -0.145&   -0.414&    0.002\\
+                &  (0.065)&  (0.499)&  (0.029)\\
+Native Born     &    0.182&    0.452&   -0.093\\
+                &  (0.065)&  (0.308)&  (0.024)\\
+12th Grade Only &   -0.508&    1.215&    0.004\\
+                &  (0.161)&  (0.525)&  (0.068)\\
+Some College    &   -0.681&    1.041&    0.146\\
+                &  (0.196)&  (0.877)&  (0.079)\\
+Veteran         &   -0.207&   -2.099&    0.436\\
+                &  (0.162)&  (1.064)&  (0.083)\\
+\# of Children  &    0.248&    0.067&    0.142\\
+                &  (0.085)&  (0.179)&  (0.032)\\
+\midrule
+Population Weighted&      Yes&      Yes&      Yes\\
+$ R^2$          &     0.17&     0.16&     0.31\\
+N               &      722&      722&      722\\
+\bottomrule
+\multicolumn{4}{l}{\footnotesize Standard errors in parentheses}\\
+\end{tabular}
+
+\end{document}

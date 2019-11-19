@@ -1,0 +1,36 @@
+\documentclass{article}
+\usepackage{geometry}[margin = 2.5 cm]
+\usepackage{color}
+\usepackage{booktabs}
+\usepackage{multirow}
+
+
+\begin{document}
+\section{table 1}
+\begin{tabular}{l*{6}{c}}
+\toprule
+                &\multicolumn{1}{c}{Oil and Gas Extraction}&\multicolumn{1}{c}{Motor Vehicles}&\multicolumn{1}{c}{Other}&\multicolumn{1}{c}{Guided Missiles}&\multicolumn{1}{c}{Blast furnaces}&\multicolumn{1}{c}{Bartik (1980 shares)}\\
+\midrule
+Male            &    1.318&   -0.500&    4.077&    0.125&    0.343&   -0.178\\
+                &  (0.242)&  (0.160)&  (0.600)&  (0.063)&  (0.159)&  (0.035)\\
+White           &    0.043&   -0.710&   -1.320&    0.057&   -0.681&   -0.088\\
+                &  (0.102)&  (0.651)&  (0.282)&  (0.042)&  (0.255)&  (0.029)\\
+Native Born     &    0.363&   -0.127&    0.821&   -0.157&   -0.312&   -0.173\\
+                &  (0.092)&  (0.109)&  (0.281)&  (0.133)&  (0.129)&  (0.019)\\
+12th Grade Only &   -1.095&    1.285&    1.034&   -0.193&    0.202&    0.035\\
+                &  (0.218)&  (0.393)&  (0.355)&  (0.091)&  (0.150)&  (0.030)\\
+Some College    &   -0.310&    0.688&    1.055&    0.034&   -0.807&    0.377\\
+                &  (0.143)&  (0.520)&  (0.288)&  (0.071)&  (0.254)&  (0.042)\\
+Veteran         &   -0.294&    0.893&   -5.792&    0.202&    2.527&    0.000\\
+                &  (0.227)&  (0.917)&  (0.879)&  (0.126)&  (0.714)&  (0.072)\\
+\# of Children  &   -0.039&    0.904&   -2.291&   -0.005&    0.004&   -0.066\\
+                &  (0.135)&  (0.510)&  (0.532)&  (0.045)&  (0.212)&  (0.033)\\
+\midrule
+Population Weighted&      Yes&      Yes&      Yes&      Yes&      Yes&      Yes\\
+$ R^2$          &     0.24&     0.08&     0.46&     0.27&     0.23&     0.77\\
+N               &      722&      722&      722&      722&      722&      722\\
+\bottomrule
+\multicolumn{7}{l}{\footnotesize Standard errors in parentheses}\\
+\end{tabular}
+
+\end{document}

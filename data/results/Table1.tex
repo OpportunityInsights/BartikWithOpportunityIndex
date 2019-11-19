@@ -1,0 +1,64 @@
+\documentclass{article}
+\usepackage{geometry}[margin = 2.5 cm]
+\usepackage{color}
+\usepackage{booktabs}
+\usepackage{multirow}
+
+
+\begin{document}
+\section{table 1}
+\begin{tabular}{cccccc}
+\toprule
+\multicolumn{3}{l}{\textbf{Panel A: Negative and positive weights}}\\
+ & Sum & Mean & Share \\  \cmidrule(lr){2-4}
+Negative & -0.368 & -0.004 & 0.212 \\
+Positive & 1.368 & 0.010 & 0.788 \\
+\multicolumn{5}{l}{\textbf{Panel B: Correlations of Industry Aggregates} }\\
+ &$\alpha_k$ & $g_{k}$ & $\beta_k$ & $F_{k}$ & Var($z_k$) \\
+\cmidrule(lr){2-6} 
+ & \\
+ $\alpha_k$             & 1\\
+ $g_{k}$                &   -0.014  & 1\\
+ $\beta_{k}$             &   0.017  & -0.769    &1\\
+ $F_{k}$                &   0.477  & -0.032    &  0.024  & 1\\
+ Var($z_{k}$)           &   0.549  & -0.032    &  0.010  &  0.316   &1\\
+\multicolumn{5}{l}{\textbf{Panel C: Variation across years in $\alpha_{k}$}}\\
+ & Sum & Mean \\  \cmidrule(lr){2-3}
+1980 & 0.458 & 0.002 \\
+1990 & 0.182 & 0.001 \\
+2000 & 0.360 & 0.002 \\
+\multicolumn{5}{l}{\textbf{Panel D: Top 5 Rotemberg weight industries} }\\
+ & $\hat{\alpha}_{k}$ & $g_{k}$ & $\hat{\beta}_{k}$ & 95 \% CI & Ind Share \\ \cmidrule(lr){2-6}
+Oil+Gas Extraction & 0.228 & 0.034 & 1.170 & (0.80,1.90)  & 0.568 \\ 
+Motor Vehicles & 0.140 & -0.017 & 1.524 & (1.30,1.90)  & 1.404 \\ 
+Other & 0.091 & -0.062 & 0.757 & (0.10,1.70)  & 1.697 \\ 
+Guided Missiles & 0.069 & 0.047 & 0.116 & (-2.20,0.70)  & 0.236 \\ 
+Blast furnaces & 0.058 & -0.078 & 1.084 & (0.60,5.00)  & 0.800 \\ 
+\multicolumn{5}{l}{\textbf{Panel E: Estimates of $\beta_{k}$ for positive and negative weights} }\\
+ & $\alpha$-weighted Sum & Share of overall $\beta$ & Mean  \\ \cmidrule(lr){2-3}
+ Negative & -0.075 & -0.062 &1.699 \\
+ Positive & 1.289 & 1.062 & -1.256 \\
+\bottomrule
+\end{tabular}
+
+\pagebreak
+\section{table 3}
+\begin{tabular}{ccccc}
+OLS & 0.71 & 0.63 & [0.03] & \\
+    & (0.06)& (0.07)&         & \\
+2SLS (Leave-Out Bartik) & 1.76 & 1.28 & [0.23] & \\
+    & (0.33) & (0.42) &         & \\
+2SLS (Bartik) & 1.65 & 1.21 & [0.19] & \\
+    & (0.34) & (0.15) &         & \\
+2SLS & 0.74 & 0.67 & [0.10] & 1014.28 \\
+    & (0.05)& (0.07)&         & [0.00] \\
+MBTSLS & 0.76 & 0.69 & [0.13] & \\
+    & (0.06)& (0.07)&         & \\
+LIML & 1.60 & 1.42 & [0.76] & 2821.93382415657\\
+    & (0.00)& (0.57)&         & [0.00] \\
+HFUL &  &  &  &  \\
+    & & &         &   \\
+\end{tabular}
+
+
+\end{document}
