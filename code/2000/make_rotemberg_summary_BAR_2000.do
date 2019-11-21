@@ -2,15 +2,19 @@
 
 clear all
 set matsize 1000
+global bartikFolder "$dropbox\outside\Bartik_Shock"
+global raw "$bartikFolder\raw"
+global derived "$bartikFolder/derived"
+global results "$bartikFolder/results"
+
  
-foreach baseYear in 2000 {
+foreach baseYear in 1980 1990 2000 {
+use "$raw/input_BAR2", clear
+keep if year == `baseYear'
 
-
-global data_path "C:\Users\per023\Documents\GitHub\gpss_replication\data/`baseYear'"
-use $data_path/input_BAR2, clear
 
 local controls male race_white native_born educ_hs educ_coll veteran nchild
-local weight pop1980
+local weight pop`baseYear'
 
 local y kfr_pooled_pooled_p25
 local x emp_ch
@@ -35,60 +39,9 @@ drop mean_growth
 
 /* Construct initial industry shares  and controls */
 sort czone year
-// foreach ind_var of varlist sh_ind_* {
-// 	gen `ind_var'_`baseYear'b = `ind_var' if year == `baseYear'
-// 	by czone (year): gen init_`ind_var' = `ind_var'_`baseYear'b[1]
-// 	drop `ind_var'_`baseYear'b
-// 	qui sum init_`ind_var'
-// 	if r(mean) == 0 {
-// 		drop init_`ind_var'
-// 		if regexm("`ind_var'", "`ind_stub'(.*)") {
-// 			local ind_num = regexs(1)
-// 			}
-// 		}
-// 	}
-//
-// foreach var of varlist init_sh_ind_* {
-// 	if regexm("`var'", "init_sh_ind_(.*)") {
-// 		local ind = regexs(1) 
-// 		gen nat1980_empl_ind_`ind' = `growth_stub'`ind'
-// 		}
-// 	}
-
-// sort czone year
-// foreach control of varlist `controls' {
-// 	gen `control'_`baseYear'b = `control' if year == `baseYear'
-// 	by czone (year): gen init_`control' = `control'_`baseYear'b[1]
-// 	drop `control'_`baseYear'b
-// }
 
 local ind_stub sh_ind_
 local controls male race_white native_born educ_hs educ_coll veteran nchild
-// local growth_stub nat1980_empl_ind_
-
-
-
-// foreach year in `years' {
-// 	foreach ind_var of varlist `ind_stub'* {
-// 		gen t`year'_`ind_var' = `ind_var' * (year == `year')
-// 		}
-// 	foreach var of varlist `growth_stub'* {
-// 		gen t`year'_`var'b = `var' if year == `year'
-// 		egen t`year'_`var' = max(t`year'_`var'b), by(czone)
-// 		drop t`year'_`var'b
-// 		replace t`year'_`var' = 0 if t`year'_`var' == .
-// 		}
-// 	foreach ind_var of varlist `controls' {
-// 		if `year' != 0 {
-// 			gen t`year'_`ind_var' = `ind_var' * (year == `year')
-// 			}
-// 		}
-// 	}
-
-// qui desc t*_`growth_stub'*, varlist full
-// disp wordcount(r(varlist))
-// qui desc t*_`ind_stub'*, varlist
-// disp wordcount(r(varlist))
 
 egen test = rowtotal(`ind_stub'*), 
 foreach ind_var of varlist `ind_stub'* {
@@ -217,7 +170,7 @@ gen agg_indshare_sd = indshare_sd2 / alpha1
 gen agg_g = G2/alpha1
 
 preserve
-	import excel using "$data_path/ind1990_labels.xlsx", clear cellrange(A4) allstring
+	import excel using "$raw/ind1990_labels.xlsx", clear cellrange(A4) allstring
 	rename A ind
 	rename B ind_name
 	destring ind, replace
@@ -253,7 +206,8 @@ keep if _merge == 3
 
 gsort -alpha1
 
-export delim "$data_path/Derived/IndustryWeights", replace
+save "$derived/`baseYear'/IndustryWeights", replace
+export delim "$derived/`baseYear'/IndustryWeights", replace
 
 
 /***
@@ -268,7 +222,7 @@ ind	alpha1	beta2	beta1	agg_beta
 
 
 capture file close fh
-file open fh  using "$data_path/results/rotemberg_summary_bar.tex", write replace
+file open fh  using "$results/`baseYear'/rotemberg_summary_bar.tex", write replace
 file write fh "\toprule" _n
 
 /** Panel A: Negative and Positive Weights **/
@@ -360,11 +314,11 @@ gen positive_weight = alpha1 > 0
 gen agg_beta_pos = agg_beta if positive_weight == 1
 gen agg_beta_neg = agg_beta if positive_weight == 0
 twoway (scatter agg_beta_pos agg_beta_neg F if F >= 5 [aweight=abs_alpha ], msymbol(Oh Dh) ), legend(label(1 "Positive Weights") label( 2 "Negative Weights")) yline(`b', lcolor(black) lpattern(dash)) xtitle("First stage F-statistic")  ytitle("{&beta}{subscript:k} estimate")
-graph export "$data_path/results/overid_BAR.pdf", replace
+graph export "$results/`baseYear'/overid_BAR.pdf", replace
 
 gsort -alpha1
 twoway (scatter F alpha1 if _n <= 5, mcolor(dblue) mlabel(ind_name  ) msize(0.5) mlabsize(2) ) (scatter F alpha1 if _n > 5, mcolor(dblue) msize(0.5) ), name(a, replace) xtitle("Rotemberg weight") ytitle("First stage F-statistic") yline(10, lcolor(black) lpattern(dash)) legend(off)
-graph export "$data_path/results/F_vs_rotemberg_weight_BAR.pdf", replace
+graph export "$results/`baseYear'/F_vs_rotemberg_weight_BAR.pdf", replace
 
 /** Panel E: Weighted Betas by alpha weights **/
 
