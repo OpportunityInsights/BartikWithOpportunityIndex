@@ -5,7 +5,9 @@
 clear all
 set matsize 1000
 
-global data_path "C:\Users\per023\Documents\GitHub\gpss_replication\data/2000"
+foreach baseYear in 1980 1990 2000 {
+
+global data_path "C:\Users\per023\Documents\GitHub\gpss_replication\data/`baseYear'"
 use $data_path/input_BAR2, clear
 
 local controls male race_white native_born educ_hs educ_coll veteran nchild
@@ -84,3 +86,4 @@ esttab using $data_path/results/bar_characteristics.tex, 	drop(_cons) b(3) not s
 
 
 
+}

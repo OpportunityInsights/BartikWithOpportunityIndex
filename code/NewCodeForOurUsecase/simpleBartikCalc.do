@@ -87,7 +87,7 @@ foreach var of varlist `ind_stub'* {
 	tempvar temp
 	qui replace bartikInst = bartikInst + `var' * `growth_stub'`ind'
 }
-qui regress `x' bartikInst `controls' [aweight=`weight'], cluster(czone)
+/*qui regress `x' bartikInst `controls' [aweight=`weight'], cluster(czone)
 	local pi_bart = _b[bartikInst]
 	qui test bartikInst
 	local F_bart = r(F)
@@ -97,8 +97,8 @@ qui regress `x' bartikInst `controls' [aweight=`weight'], cluster(czone)
 	local beta_bart = string(_b[`x'], "%9.3f") 
 
 di `pi_bart' " " `gamma_bart' " " `beta_bart' 
-
-keep czone czname kfr_pooled_pooled_p25 wage_ch emp_ch bartikInst
+*/
+keep czone wage_ch emp_ch bartikInst educ_coll_lt4yrs educ_coll_4yrs ageDecile
 export delim "$derived/`baseYear'/BartikInst", replace
 save "$derived/`baseYear'/BartikInst", replace
 }
