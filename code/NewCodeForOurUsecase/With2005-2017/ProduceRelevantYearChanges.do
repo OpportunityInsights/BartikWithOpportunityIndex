@@ -6,10 +6,6 @@ global derived "$bartikFolder/derived"
 
 use "$raw/input_BARWithoutIndEmplCh1980-2017", clear
 
-replace year = 2006 if year >= 2005 & year <= 2007
-replace year = 2010 if year >= 2009 & year <= 2011
-replace year = 2016 if year >= 2015 & year <= 2017
-
 levelsof year, local(years)
 gen wage = .
 gen empl = .
@@ -17,6 +13,10 @@ foreach year in `years' {
  replace wage = wage`year' if year == `year'
  replace empl = empl`year' if year == `year'
 }
+
+replace year = 2006 if year >= 2005 & year <= 2007
+replace year = 2010 if year >= 2009 & year <= 2011
+replace year = 2016 if year >= 2015 & year <= 2017
 
 keep if inlist(year, 2000, 2006, 2010, 2016)
 collapse wage* emp* natind* sh_ind* [aw = perwt_cz], by(czone year ageDecile educ_coll_lt4yrs educ_coll_4yrs)
@@ -34,7 +34,7 @@ egen panelVar = group(czone ageDecile educ_coll_lt4yrs educ_coll_4yrs)
 sort panelVar year
 tsset panelVar year, delta(`delta')
 
-gen wage_ch = ((F.wage-empl)/empl)/*/(`delta')*/
+gen wage_ch = ((F.wage-empl)/wage)/*/(`delta')*/
 gen emp_ch = ((F.empl-empl)/empl)/*/(`delta')*/
 
 
