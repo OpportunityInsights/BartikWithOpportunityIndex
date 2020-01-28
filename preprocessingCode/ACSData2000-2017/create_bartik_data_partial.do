@@ -14,16 +14,15 @@ local geographies = "czone"												//Set geographies to use (puma, statefip,
 local geo = "czone"
 local switch = "CZone"
 
-global main = "/nfs/home/P/per023/shared_space/per023_proj/ACSData2000-2017"
+global main = "/nfs/home/P/per023/shared_space/bartik/ACSData2000-2017"
 
 
 
 
-
+/*
 ********************************************************************************
 * #1 Generate Basic Variables, Pool ACS for 2010
 ********************************************************************************
-/*
 use "${main}/raw/IPUMS_data", clear												//Main dataset downloaded from IPUMS
 drop ind																		//This is a time-inconsistent industry code we no longer use
 merge 1:1 year serial pernum using "${main}/raw/IPUMS_ind1990", nogen assert(3) //Merge on ind1990 variable (3-digit, time-consistent), downloaded separately
@@ -53,7 +52,8 @@ assert !inrange(ind3,940,960) if full_time==1 & year==1980						//No full-time m
 replace ind3 = 0 if inrange(ind3,940,960)								//Replace 1990+ military codes with 1980 N/A code
 
 //gen cz_match = statefip*1000 + cntygp98 if year == 1980
-gen cz_match = statefip*10000 + real_puma if year != 1980
+gen cz_match = statefip*10000 + real_puma
+replace cz_match = statefip*100000 + real_puma if year >= 2012
 
 preserve
 *append in all of the commuting zone crosswalks (varies by year)
@@ -64,15 +64,19 @@ replace year = 1990 if year == .
 */
 clear
 gen year = .
-forvalues year = 2000/2017{
+forvalues year = 2000/2011{
 	append using "${main}/raw/cw_puma2000_czone"
 	replace year = `year' if year == .
 }
+forvalues year = 2012/2017{
+	append using "${main}/raw/cw_puma2010_czone"
+	replace year = `year' if year == .
+}
 
-egen unique_identifier = rownonmiss(puma2000)
+egen unique_identifier = rownonmiss(puma2000 puma2010)
 sum unique_identifier
 assert unique_identifier == 1
-egen cz_match = rowtotal(puma2000)
+egen cz_match = rowtotal(puma2000 puma2010)
 
 keep afactor czone year cz_match
 tempfile cz_xwalk
@@ -97,6 +101,10 @@ assert `test' == 722
 save "${main}/raw/raw_bartik", replace
 
 use "${main}/raw/raw_bartik", clear
+
+unique czone
+local test = r(sum)
+assert `test' == 722
 	
 ****************************************************************************
 * #2 Generate Characteristic Variables to Collapse (Don't Need to Separate by Geography)
@@ -140,6 +148,12 @@ label var race_other "Other Race"
 gen hispanic = inlist(hispan,1,2,3,4) if hispan!=9 & !missing(hispan)
 label var hispanic "Hispanic"
 
+
+unique czone
+local test = r(sum)
+assert `test' == 722
+
+
 gen native_born = citizen==0 if !missing(citizen)								//Universe of this variable is foreign-born persons, so N/As are native born
 label var native_born "Native Born"
 
@@ -172,6 +186,10 @@ label var employed "Share Employed"
 gen in_lf = labforce==1  if !missing(labforce) 									//Indicator for in labor force, N/As (code 0) are 
 label var in_lf "Share in Labor Force"
 
+unique czone
+local test = r(sum)
+assert `test' == 722
+
 /*
 *Generate Migration Indicators, excluding N/As and missing
 gen migr5_same_house = inlist(migrate5,1) if !missing(migrate5) & !inlist(migrate5,0,9) //Living in the same house as 5 years ago
@@ -194,6 +212,10 @@ recode inctot ftotinc incwage incss incwelfr incearn valueh (9999999 = .)		//Rep
 recode ftotinc incwage (999998 = .)												//Additional missing code is present for some income variables
 *Note that some of these income variables are top-coded, with top-codes changing over time (inconsistent)
 
+unique czone
+local test = r(sum)
+assert `test' == 722
+
 recode sei hwsei (0 = .)														//Recode N/As as missing
 
 *Label some remaining variables
@@ -209,11 +231,18 @@ label var incearn "Earned Income"
 label var sei "Socio-Economic Index"
 label var hwsei "Socio-Economic Index v2"
 
+unique czone
+local test = r(sum)
+assert `test' == 722
+
 save "${main}/raw/intermediateBartik", replace
- 
-*/
+ */
  
 use "${main}/raw/intermediateBartik", clear
+unique czone
+local test = r(sum)
+assert `test' == 722
+
 
 local per_vars male married race_white race_black race_namerican race_asian race_other hispanic  ///
 	native_born yrs_us_lt10 educ_lt12 educ_hs /*educ_coll_lt4yrs educ_coll_4yrs*/ educ_coll_more ///
@@ -304,7 +333,9 @@ order panelVar year, first
 note: Created by bar01_collapse_chars_shares.do / TS
 compress
 datasignature set, reset
-
+unique czone
+local test = r(sum)
+assert `test' == 722
 save "${main}/raw/Characteristics_CZone_ageSplit_`ageSplit'_educSplit_`educSplit'", replace							//Final characteristics dataset saved
 
 restore																			//Return to full dataset
@@ -329,6 +360,9 @@ tsset panelVar year, delta(`delta')
 replace natindwt = natindwt - indwt 	
 gen nat_empl_ind_ = ((F.natindwt-natindwt)/natindwt)/(10)
 //Save long version of industry shares, to recover after constructing bartik instruments
+unique czone
+local test = r(sum)
+assert `test' == 722
 save "${main}/raw/shares_long_ind`ind_digits'_`geo'_ageSplit_`ageSplit'_educSplit_`educSplit'" , replace	
 
 restore

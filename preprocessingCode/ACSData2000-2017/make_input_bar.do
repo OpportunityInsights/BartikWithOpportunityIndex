@@ -6,7 +6,7 @@ set matsize 10000
 
 local delta 1
 
-global home "/nfs/home/P/per023/shared_space/per023_proj/ACSData2000-2017"
+global home "/nfs/home/P/per023/shared_space/bartik/ACSData2000-2017"
 
 local cutVariables czone  ageDecile educ_coll_lt4yrs educ_coll_4yrs
 
