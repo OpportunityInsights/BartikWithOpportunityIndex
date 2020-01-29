@@ -18,6 +18,8 @@ local y kfr_pooled_pooled_p25
 local x emp_ch
 
 local ind_stub init_sh_ind_
+// nat_empl_ind_ will include current cz growth in national growth rates.  
+// nat_empl_ind_lo_ will exclude the current cz
 local growth_stub nat_empl_ind_
 
 local time_var year
