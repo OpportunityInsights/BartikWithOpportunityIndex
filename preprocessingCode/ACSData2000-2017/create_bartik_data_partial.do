@@ -14,12 +14,11 @@ local geographies = "czone"												//Set geographies to use (puma, statefip,
 local geo = "czone"
 local switch = "CZone"
 
-global main = "/nfs/home/P/per023/shared_space/bartik/ACSData2000-2017"
+global main = "/n/scratchlfs02/chetty_lab/Bartik/ACS2000-2017"
 
 
+ssc install unique
 
-
-/*
 ********************************************************************************
 * #1 Generate Basic Variables, Pool ACS for 2010
 ********************************************************************************
@@ -236,7 +235,7 @@ local test = r(sum)
 assert `test' == 722
 
 save "${main}/raw/intermediateBartik", replace
- */
+
  
 use "${main}/raw/intermediateBartik", clear
 unique czone
