@@ -2,7 +2,7 @@ clear all
 set matsize 1000
 global bartikFolder "$dropbox\outside\Bartik_Shock"
 global raw "$bartikFolder\raw"
-global derived "$bartikFolder/derived"
+global derived "$bartikFolder/derived$extraDerivedParam"
 
 local delta = 6
  
