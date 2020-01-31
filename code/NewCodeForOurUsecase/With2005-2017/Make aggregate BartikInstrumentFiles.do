@@ -51,15 +51,15 @@ preserve
 use "$dropbox/outside\finer_geo\data\raw\census\data_for_paper\tract_race_gender_late_dp.dta", clear
 
 keep state county kfr_pooled_pooled_p25 kfr_26_pooled_pooled_p25 ///
-	kfr_pooled_pooled_p75 kfr_26_pooled_pooled_75 kfr_pooled_pooled_n
+	kfr_pooled_pooled_p75 kfr_26_pooled_pooled_p75 kfr_pooled_pooled_n
 merge m:1 state county using "$dropbox\outside\finer_geo\data\raw\crosswalks\cw_2010cty_1990cz", nogen keep(3) keepusing(cz)
 collapse (mean) kfr_26_pooled_pooled_p25 kfr_pooled_pooled_p25 ///
-	kfr_pooled_pooled_p75 kfr_26_pooled_pooled_75 ///
+	kfr_pooled_pooled_p75 kfr_26_pooled_pooled_p75 ///
 	[aw = kfr_pooled_pooled_n], by(cz)
 
 rename kfr_26_pooled_pooled_p25 kfr_26_pooled_pooled_p25_late
 rename kfr_pooled_pooled_p25 kfr_2015_pooled_pooled_p25_late
-rename kfr_26_pooled_pooled_75 kfr_26_pooled_pooled_75_late
+rename kfr_26_pooled_pooled_p75 kfr_26_pooled_pooled_p75_late
 rename kfr_pooled_pooled_p75 kfr_pooled_pooled_p75_late
 
 save "$raw/kfr_late", replace
