@@ -50,7 +50,7 @@ merge m:1 cz ///
 
 preserve
 use state county kfr_pooled_pooled_p25 kfr_26_pooled_pooled_p25 ///
-	kfr_pooled_pooled_p75 kfr_26_pooled_pooled_75 kfr_pooled_pooled_n ///
+	kfr_pooled_pooled_p75 kfr_26_pooled_pooled_p75 kfr_pooled_pooled_n ///
 	using "$dropbox/outside/finer_geo/data/raw/census/data_for_paper/tract_race_gender_late_dp.dta", clear
 
 merge m:1 state county using ///
@@ -71,7 +71,7 @@ restore
 
 preserve
 use state county kfr_pooled_pooled_p25 kfr_26_pooled_pooled_p25 ///
-	kfr_pooled_pooled_p75 kfr_26_pooled_pooled_75 kfr_pooled_pooled_n ///
+	kfr_pooled_pooled_p75 kfr_26_pooled_pooled_p75 kfr_pooled_pooled_n ///
 	using "$dropbox/outside/finer_geo/data/raw/census/data_for_paper/tract_race_gender_early_dp.dta", clear
 
 merge m:1 state county using ///
