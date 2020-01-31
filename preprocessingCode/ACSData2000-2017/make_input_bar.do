@@ -16,8 +16,8 @@ local controls_1980 = "male_1980 race_white_1980 native_born_1980 educ_hs_1980 e
 
 
 
-foreach ageSplit in "no" {
-foreach educSplit in "no" {
+foreach ageSplit in "no" "yes" {
+foreach educSplit in "no" "yes" {
 local fileSuffix _ageSplit_`ageSplit'_educSplit_`educSplit'
 
 *create national industry share

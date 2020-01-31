@@ -267,8 +267,8 @@ local hh_vars mtg mtg2 ownership foodstamp rent hhincome valueh					//List of hh
 
 
 
-foreach ageSplit in "no" {
-foreach educSplit in "no" {
+foreach ageSplit in "no" "yes" {
+foreach educSplit in "no" "yes" {
 use "${main}/raw/intermediateBartik", clear
 
 if "`ageSplit'" == "yes" {

@@ -20,8 +20,8 @@ replace year = 2010 if year >= 2009 & year <= 2011
 replace year = 2016 if year >= 2015 & year <= 2017
 
 keep if inlist(year, 2000, 2006, 2010, 2016)
-gen ones = 1
-collapse population = ones wage* emp* natind* sh_ind* [aw = perwt_cz], by(czone year ageDecile educ_coll_lt4yrs educ_coll_4yrs)
+
+collapse (rawsum) population = perwt_cz (mean) wage* emp* natind* sh_ind* [aw = perwt_cz], by(czone year ageDecile educ_coll_lt4yrs educ_coll_4yrs)
 capture drop nat_empl_ind_
 
 foreach startYear in 2000 2010 {
