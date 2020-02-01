@@ -18,7 +18,7 @@ global main = "/n/scratchlfs02/chetty_lab/Bartik/ACS2000-2017"
 
 
 ssc install unique
-
+/*
 ********************************************************************************
 * #1 Generate Basic Variables, Pool ACS for 2010
 ********************************************************************************
@@ -235,7 +235,7 @@ local test = r(sum)
 assert `test' == 722
 
 save "${main}/raw/intermediateBartik", replace
-
+*/
  
 use "${main}/raw/intermediateBartik", clear
 unique czone
@@ -303,21 +303,21 @@ foreach type in "hh" "per" {													//Collapse household and individual var
 ****************************************************************************
 preserve																		//Preserve full dataset
 use `hh_all', clear																//Start with "all" (18+) household collapsed data
-merge 1:1 year `geo' /*ageDecile educ_coll_lt4yrs educ_coll_4yrs*/ using `per_all', nogen										//Merge on all individual data
+merge 1:1 year `geo' ageDecile educ_coll_lt4yrs educ_coll_4yrs using `per_all', nogen										//Merge on all individual data
 foreach var of varlist `hh_vars' `per_vars' perwt hhwt perwt_cz hhwt_cz {
 	ren `var' `var'_all 														//Specify sample considered as suffix
 	label var `var'_all "``var'' (All 18+)"										//Label as precollapsed label (saved above) plus sample description
 	}
 
-merge 1:1 year `geo' /*ageDecile educ_coll_lt4yrs educ_coll_4yrs*/ using `hh_ft', nogen										//Merge on household full-time data
-merge 1:1 year `geo' /*ageDecile educ_coll_lt4yrs educ_coll_4yrs*/ using `per_ft', nogen										//Merge on individual full-time data
+merge 1:1 year `geo' ageDecile educ_coll_lt4yrs educ_coll_4yrs using `hh_ft', nogen										//Merge on household full-time data
+merge 1:1 year `geo' ageDecile educ_coll_lt4yrs educ_coll_4yrs using `per_ft', nogen										//Merge on individual full-time data
 foreach var of varlist `hh_vars' `per_vars' perwt hhwt perwt_cz hhwt_cz {
 	ren `var' `var'_ft															//Specify sample considered as suffix
 	label var `var'_ft "``var''"												//Label as precollapsed label (saved above), full-time sample is usually the default
 	}
 
-merge 1:1 year `geo' /*ageDecile educ_coll_lt4yrs educ_coll_4yrs*/ using `hh_lf', nogen										//Merge on household labor-force data
-merge 1:1 year `geo' /*ageDecile educ_coll_lt4yrs educ_coll_4yrs*/ using `per_lf', nogen										//Merge on individual labor-force data
+merge 1:1 year `geo' ageDecile educ_coll_lt4yrs educ_coll_4yrs using `hh_lf', nogen										//Merge on household labor-force data
+merge 1:1 year `geo' ageDecile educ_coll_lt4yrs educ_coll_4yrs using `per_lf', nogen										//Merge on individual labor-force data
 foreach var of varlist `hh_vars' `per_vars' perwt hhwt perwt_cz hhwt_cz {
 	ren `var' `var'_lf															//Specify sample considered as suffix
 	label var `var'_lf "``var'' (All 18+ and in LF)"							//Label as precollapsed label (saved above) plus sample description
