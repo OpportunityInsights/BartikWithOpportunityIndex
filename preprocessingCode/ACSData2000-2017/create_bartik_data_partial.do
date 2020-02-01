@@ -351,7 +351,7 @@ collapse (sum)  indwt = perwt_cz (firstnm) `geo' ind`ind_digits' if age>=18 & fu
 egen `geo'wt = total(indwt), by(year `geo')								//Location-Year totals (across industries)
 gen sh_ind_ = indwt/`geo'wt										//Share of employment in an industry by Location-Year
 egen natindwt = total(indwt), by(year ind`ind_digits')							//Industry-Year totals (across locations)
-egen panelVar = group(`geo'_ind`ind_digits' /*ageDecile educ_coll_lt4yrs educ_coll_4yrs*/)
+egen panelVar = group(`geo'_ind`ind_digits' ageDecile educ_coll_lt4yrs educ_coll_4yrs)
 
 sort panelVar year
 tsset panelVar year, delta(`delta')
