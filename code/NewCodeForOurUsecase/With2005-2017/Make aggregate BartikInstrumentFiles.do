@@ -1,8 +1,7 @@
 clear all
-set matsize 1000
-global bartikFolder "$dropbox\outside\Bartik_Shock"
-global raw "$bartikFolder\raw"
-global derived "$bartikFolder/derived$extraDerivedParam"
+global bartikFolder "${dropbox}/outside/Bartik_Shock"
+global raw "${bartikFolder}/raw"
+global derived "${bartikFolder}/derived${extraDerivedParam}"
 
 // make allBartikData set
 /*foreach baseYear in 1980 1990 2000 {
@@ -17,7 +16,7 @@ tempfile industryWeights
 save `industryWeights'
 
 use "$derived/`baseYear'/BartikInst", clear
-keep czone bartikInst educ_coll_lt4yrs educ_coll_4yrs ageDecile 
+keep czone bartikInst educ_coll_lt4yrs educ_coll_4yrs ageDecile
 gen ones = 1
 merge m:1 ones using `industryWeights'
 drop ones
@@ -36,64 +35,75 @@ local delta = 6
 clear
 foreach startYear in 2000 2010 {
 	local endYear = `startYear' + `delta'
-	append using "$derived/`startYear'/BartikInst`startYear'-`endYear'"
+	append using "${derived}/`startYear'/BartikInst`startYear'-`endYear'"
 }
 
-merge 1:1 czone year educ_coll_lt4yrs educ_coll_4yrs ageDecile using  "$derived/InputBartik2000-2017", nogen
-
+merge 1:1 czone year educ_coll_lt4yrs educ_coll_4yrs ageDecile using ///
+	"$derived/InputBartik2000-2017", nogen
 merge m:1 czone year using "$derived/rentCosts", keep(1 3) nogen
 
 rename czone cz
 
-merge m:1 cz using "$dropbox/outside/finer_geo/website/data/cz_covariates.dta", keep(1 3) nogen
+merge m:1 cz ///
+	using "$dropbox/outside/finer_geo/website/data/cz_covariates.dta", ///
+	keep(1 3) nogen
+
 preserve
+use state county kfr_pooled_pooled_p25 kfr_26_pooled_pooled_p25 ///
+	kfr_pooled_pooled_p75 kfr_26_pooled_pooled_p75 kfr_pooled_pooled_n ///
+	using "$dropbox/outside/finer_geo/data/raw/census/data_for_paper/tract_race_gender_late_dp.dta", clear
 
-use "$dropbox/outside\finer_geo\data\raw\census\data_for_paper\tract_race_gender_late_dp.dta", clear
+merge m:1 state county using ///
+	"$dropbox/outside/finer_geo/data/raw/crosswalks/cw_2010cty_1990cz", ///
+	nogen keep(3) keepusing(cz)
 
-keep state county kfr_pooled_pooled_p25 kfr_26_pooled_pooled_p25 kfr_pooled_pooled_n
-merge m:1 state county using "$dropbox\outside\finer_geo\data\raw\crosswalks\cw_2010cty_1990cz", nogen keep(3) keepusing(cz)
-collapse (mean) kfr_26_pooled_pooled_p25 ///
-	kfr_pooled_pooled_p25 [aw = kfr_pooled_pooled_n], by(cz)
+collapse (mean) kfr_26_pooled_pooled_p25 kfr_pooled_pooled_p25 ///
+	kfr_pooled_pooled_p75 kfr_26_pooled_pooled_p75 ///
+	[aw = kfr_pooled_pooled_n], by(cz)
 
-rename kfr_26_pooled_pooled_p25 kfr_26_pooled_pooled_p25_late
-rename kfr_pooled_pooled_p25 kfr_2015_pooled_pooled_p25_late
+rename (kfr_26_pooled_pooled_p25 kfr_pooled_pooled_p25 ///
+		kfr_26_pooled_pooled_p75 kfr_pooled_pooled_p75) ///
+	   (kfr_26_pooled_pooled_p25_late kfr_2015_pooled_pooled_p25_late ///
+		kfr_26_pooled_pooled_p75_late kfr_2015_pooled_pooled_p75_late)
 
 save "$raw/kfr_late", replace
 restore
 
 preserve
+use state county kfr_pooled_pooled_p25 kfr_26_pooled_pooled_p25 ///
+	kfr_pooled_pooled_p75 kfr_26_pooled_pooled_p75 kfr_pooled_pooled_n ///
+	using "$dropbox/outside/finer_geo/data/raw/census/data_for_paper/tract_race_gender_early_dp.dta", clear
 
-use "$dropbox/outside\finer_geo\data\raw\census\data_for_paper\tract_race_gender_early_dp.dta", clear
+merge m:1 state county using ///
+	"$dropbox/outside/finer_geo/data/raw/crosswalks/cw_2010cty_1990cz", ///
+	nogen keep(3) keepusing(cz)
 
-keep state county kfr_pooled_pooled_p25 kfr_26_pooled_pooled_p25 kfr_pooled_pooled_n kfr_26_pooled_pooled_n
-merge m:1 state county using "$dropbox\outside\finer_geo\data\raw\crosswalks\cw_2010cty_1990cz", nogen keep(3) keepusing(cz)
-collapse (mean) kfr_26_pooled_pooled_p25 ///
-	kfr_pooled_pooled_p25 [aw = kfr_pooled_pooled_n], by(cz)
-	
-rename kfr_26_pooled_pooled_p25 kfr_26_pooled_pooled_p25_early
-rename kfr_pooled_pooled_p25 kfr_2015_pooled_pooled_p25_early
+collapse (mean) kfr_26_pooled_pooled_p25 kfr_pooled_pooled_p25 ///
+	kfr_26_pooled_pooled_p75 kfr_pooled_pooled_p75 ///
+	[aw = kfr_pooled_pooled_n], by(cz)
+
+rename (kfr_26_pooled_pooled_p25 kfr_pooled_pooled_p25 ///
+		kfr_26_pooled_pooled_p75 kfr_pooled_pooled_p75) ///
+	   (kfr_26_pooled_pooled_p25_early kfr_2015_pooled_pooled_p25_early ///
+		kfr_26_pooled_pooled_p75_early kfr_2015_pooled_pooled_p75_early)
 
 save "$raw/kfr_early", replace
 restore
 
-
 merge m:1 cz using "$raw/kfr_early", nogen
-
 merge m:1 cz using "$raw/kfr_late", nogen
 
 rename cz czone
 
-gen kfr_diff = kfr_26_pooled_pooled_p25_late - kfr_26_pooled_pooled_p25_early
+gen kfr_diff = kfr_26_pooled_pooled_p25_late - ///
+			   kfr_26_pooled_pooled_p25_early
 
 replace ageDecile = . if ageDecile == -1
 replace educ_coll_lt4yrs = . if educ_coll_lt4yrs == -1
 replace educ_coll_4yrs = . if educ_coll_4yrs == -1
 
-gen educ_options = educ_coll_lt4yrs + 2* educ_coll_4yrs
+gen educ_options = educ_coll_lt4yrs + 2 * educ_coll_4yrs
 
-	//capture drop wage_ch emp_ch
-
-	
 save "$derived/aggregateBartikData_2000-2017", replace
 
 /*
@@ -150,7 +160,7 @@ gen emp_ch = .
 foreach baseYear in 1980 1990 2000 {
 	local endYear = `baseYear' + 10
 	di `endYear'
-	
+
 		replace wage_ch = (wage`endYear' - wage`baseYear')/wage`baseYear' if year == `baseYear'
 		replace emp_ch = (empl`endYear' - empl`baseYear')/empl`baseYear' if year == `baseYear'
 
