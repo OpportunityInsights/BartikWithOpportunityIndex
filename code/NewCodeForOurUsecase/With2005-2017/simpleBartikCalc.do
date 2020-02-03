@@ -23,7 +23,6 @@ local ind_stub init_sh_ind_
 local growth_stub nat_empl_ind_
 
 local time_var year
-local cluster_var czone
 
 /*qui tab year, gen(year_)
 drop year_1*/
@@ -43,7 +42,6 @@ sort czone year
 
 local ind_stub sh_ind_
 local controls male race_white native_born educ_hs educ_coll veteran nchild
-// local growth_stub nat1980_empl_ind_
 
 
 
@@ -92,17 +90,7 @@ foreach var of varlist `ind_stub'* {
 	qui replace bartikInst = bartikInst + `var' * `growth_stub'`ind' ///
 			if `var'!= . & `growth_stub'`ind'!=.
 }
-/*qui regress `x' bartikInst `controls' [aweight=`weight'], cluster(czone)
-	local pi_bart = _b[bartikInst]
-	qui test bartikInst
-	local F_bart = r(F)
-	qui reg  `y' bartikInst `controls'   [aweight=`weight'], cluster(czone)
-	local gamma_bart = _b[bartikInst]
-	qui ivreg2  `y' `controls' (`x'=bartikInst) [aweight=`weight'], cluster(czone) partial(`controls')
-	local beta_bart = string(_b[`x'], "%9.3f") 
 
-di `pi_bart' " " `gamma_bart' " " `beta_bart' 
-*/
 keep czone year wage_ch emp_ch bartikInst educ_coll_lt4yrs educ_coll_4yrs ageDecile
 
 local endYear = `baseYear' + `delta'

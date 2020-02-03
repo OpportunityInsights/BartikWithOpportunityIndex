@@ -5,8 +5,8 @@ global raw "$bartikFolder\raw"
 global derived "$bartikFolder/derived"
 
 
-foreach ageSplit in "no" {
-foreach educSplit in "no" {
+foreach ageSplit in "no" "yes" {
+foreach educSplit in "no" "yes" {
 local fileSuffix _ageSplit_`ageSplit'_educSplit_`educSplit'
 append using "$raw/input_BAR2`fileSuffix'2005-2017"
 preserve
