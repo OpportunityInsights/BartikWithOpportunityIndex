@@ -269,23 +269,21 @@ local hh_vars mtg mtg2 ownership foodstamp rent hhincome valueh					//List of hh
 
 foreach ageSplit in "no" "yes" {
 foreach educSplit in "no" "yes" {
-use "${main}/raw/intermediateBartik", clear
-
-if "`ageSplit'" == "yes" {
-	gen ageDecile = floor((age - 15)/10)
-}
-else {
-	gen ageDecile = -1
-}
-
-if "`educSplit'" == "no" {
-	replace educ_coll_4yrs = -1
-	replace educ_coll_lt4yrs = -1
-}
-
 foreach type in "hh" "per" {													//Collapse household and individual variables separately, weighting appropriately
 	foreach restr2 in "" "& inlist(empstat,1,2)" "& full_time==1" {					//Create 3 samples, either all 18+, 18+ in LF, or 18+ full-time employed
-		preserve																		//Preserve full dataset
+		use "${main}/raw/intermediateBartik", clear
+
+		if "`ageSplit'" == "yes" {
+			gen ageDecile = floor((age - 15)/10)
+		}
+		else {
+			gen ageDecile = -1
+		}
+
+		if "`educSplit'" == "no" {
+			replace educ_coll_4yrs = -1
+			replace educ_coll_lt4yrs = -1
+		}
 		drop if missing(`geo')															//Drop if no locational data
 		collapse (count) sampleSize = `type'wt_cz (mean) ``type'_vars' (rawsum) `type'wt `type'wt_cz [aw=`type'wt_cz] if age>=18 `restr2', by(`geo' year ageDecile educ_coll_lt4yrs educ_coll_4yrs)	//Collapse
 		local file_nm = "`type'" + cond("`restr2'"=="","_all", ///
@@ -293,7 +291,6 @@ foreach type in "hh" "per" {													//Collapse household and individual var
 		  cond("`restr2'"=="& full_time==1","_ft","_error")))
 		tempfile `file_nm'
 		save ``file_nm''																//Save collapsed version as temp file, we'll merge within geography together in next step
-		restore																			//Return to full dataset to collapse again
 		}
 	}
 
@@ -301,7 +298,19 @@ foreach type in "hh" "per" {													//Collapse household and individual var
 ****************************************************************************
 * #4 Combine Collapsed Characteristic Files within a Geography (Across Samples)
 ****************************************************************************
-preserve																		//Preserve full dataset
+use "${main}/raw/intermediateBartik", clear
+
+		if "`ageSplit'" == "yes" {
+			gen ageDecile = floor((age - 15)/10)
+		}
+		else {
+			gen ageDecile = -1
+		}
+
+		if "`educSplit'" == "no" {
+			replace educ_coll_4yrs = -1
+			replace educ_coll_lt4yrs = -1
+		}																		
 use `hh_all', clear																//Start with "all" (18+) household collapsed data
 merge 1:1 year `geo' ageDecile educ_coll_lt4yrs educ_coll_4yrs using `per_all', nogen										//Merge on all individual data
 foreach var of varlist `hh_vars' `per_vars' perwt hhwt perwt_cz hhwt_cz sampleSize {
@@ -337,13 +346,24 @@ local test = r(sum)
 assert `test' == 722
 save "${main}/raw/Characteristics_CZone_ageSplit_`ageSplit'_educSplit_`educSplit'", replace							//Final characteristics dataset saved
 
-restore																			//Return to full dataset
-
 ****************************************************************************
 * #5 Collapse to Long Version of Industry Shares (State vs. Puma) X (1, 2, or 3 digit industry)
 ****************************************************************************
+
+use "${main}/raw/intermediateBartik", clear
+
+		if "`ageSplit'" == "yes" {
+			gen ageDecile = floor((age - 15)/10)
+		}
+		else {
+			gen ageDecile = -1
+		}
+
+		if "`educSplit'" == "no" {
+			replace educ_coll_4yrs = -1
+			replace educ_coll_lt4yrs = -1
+		}
 local  ind_digits = 3
-preserve																		//Preserve full dataset
 drop if missing(`geo')															//Drop if no locational data
 egen double `geo'_ind`ind_digits' = group(`geo' ind`ind_digits')				//Location-Industry groupings
 
@@ -363,8 +383,6 @@ unique czone
 local test = r(sum)
 assert `test' == 722
 save "${main}/raw/shares_long_ind`ind_digits'_`geo'_ageSplit_`ageSplit'_educSplit_`educSplit'" , replace	
-
-restore
 
 }
 }
