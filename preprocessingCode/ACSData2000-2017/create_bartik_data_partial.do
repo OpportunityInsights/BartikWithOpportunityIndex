@@ -287,7 +287,7 @@ foreach type in "hh" "per" {													//Collapse household and individual var
 	foreach restr2 in "" "& inlist(empstat,1,2)" "& full_time==1" {					//Create 3 samples, either all 18+, 18+ in LF, or 18+ full-time employed
 		preserve																		//Preserve full dataset
 		drop if missing(`geo')															//Drop if no locational data
-		collapse (mean) ``type'_vars' (rawsum) `type'wt `type'wt_cz [aw=`type'wt_cz] if age>=18 `restr2', by(`geo' year ageDecile educ_coll_lt4yrs educ_coll_4yrs)	//Collapse
+		collapse (count) sampleSize = `type'wt_cz (mean) ``type'_vars' (rawsum) `type'wt `type'wt_cz [aw=`type'wt_cz] if age>=18 `restr2', by(`geo' year ageDecile educ_coll_lt4yrs educ_coll_4yrs)	//Collapse
 		local file_nm = "`type'" + cond("`restr2'"=="","_all", ///
 		  cond("`restr2'"=="& inlist(empstat,1,2)","_lf", ///
 		  cond("`restr2'"=="& full_time==1","_ft","_error")))
@@ -304,21 +304,21 @@ foreach type in "hh" "per" {													//Collapse household and individual var
 preserve																		//Preserve full dataset
 use `hh_all', clear																//Start with "all" (18+) household collapsed data
 merge 1:1 year `geo' ageDecile educ_coll_lt4yrs educ_coll_4yrs using `per_all', nogen										//Merge on all individual data
-foreach var of varlist `hh_vars' `per_vars' perwt hhwt perwt_cz hhwt_cz {
+foreach var of varlist `hh_vars' `per_vars' perwt hhwt perwt_cz hhwt_cz sampleSize {
 	ren `var' `var'_all 														//Specify sample considered as suffix
 	label var `var'_all "``var'' (All 18+)"										//Label as precollapsed label (saved above) plus sample description
 	}
 
 merge 1:1 year `geo' ageDecile educ_coll_lt4yrs educ_coll_4yrs using `hh_ft', nogen										//Merge on household full-time data
 merge 1:1 year `geo' ageDecile educ_coll_lt4yrs educ_coll_4yrs using `per_ft', nogen										//Merge on individual full-time data
-foreach var of varlist `hh_vars' `per_vars' perwt hhwt perwt_cz hhwt_cz {
+foreach var of varlist `hh_vars' `per_vars' perwt hhwt perwt_cz hhwt_cz sampleSize {
 	ren `var' `var'_ft															//Specify sample considered as suffix
 	label var `var'_ft "``var''"												//Label as precollapsed label (saved above), full-time sample is usually the default
 	}
 
 merge 1:1 year `geo' ageDecile educ_coll_lt4yrs educ_coll_4yrs using `hh_lf', nogen										//Merge on household labor-force data
 merge 1:1 year `geo' ageDecile educ_coll_lt4yrs educ_coll_4yrs using `per_lf', nogen										//Merge on individual labor-force data
-foreach var of varlist `hh_vars' `per_vars' perwt hhwt perwt_cz hhwt_cz {
+foreach var of varlist `hh_vars' `per_vars' perwt hhwt perwt_cz hhwt_cz sampleSize {
 	ren `var' `var'_lf															//Specify sample considered as suffix
 	label var `var'_lf "``var'' (All 18+ and in LF)"							//Label as precollapsed label (saved above) plus sample description
 	}

@@ -82,16 +82,32 @@ drop if czone == .
 
 drop if czone == .
 qui gen bartikInst = 0
+qui gen bartikVariance = 0
+gen sampleSize = population/100 
+replace sampleSize = 1 if sampleSize<1
+// this is an approximation for the original sample size which should be thought through and 
+								// later with the actual sample numbers that went into the calculation with appropriate weights
+								// I (peter) am doing this shortcut now to avoid rerunning the preprocessing code and making various edits
+								// to track through what the sample with weights should be
+								// This should not be taken as the authoritative sample that should be used below, but rather a shortcut
+								// for approximation
+
 foreach var of varlist `ind_stub'* {
 	if regexm("`var'", "`ind_stub'(.*)") {
 		local ind = regexs(1) 
 		}
-	tempvar temp
 	qui replace bartikInst = bartikInst + `var' * `growth_stub'`ind' ///
 			if `var'!= . & `growth_stub'`ind'!=.
+	gen shareVariance = `var' * (1-`var') / sampleSize // This variance calculation comes from the variance of a Bernoulli distribution (empirically estimated) which
+														// represents the ACS choosing a portion of the total population
+	qui replace bartikVariance = bartikVariance +  shareVariance * (`growth_stub'`ind')^2 if `var'!= . & `growth_stub'`ind'!=.
+						// the industry shares are by far the higher variance object compared to national
+						// growth rates, so this approximation works
+	drop shareVariance
 }
+drop sampleSize
 
-keep czone year wage_ch emp_ch bartikInst educ_coll_lt4yrs educ_coll_4yrs ageDecile
+keep czone year wage_ch emp_ch bartikInst bartikVariance educ_coll_lt4yrs educ_coll_4yrs ageDecile
 
 local endYear = `baseYear' + `delta'
 export delim "$derived/`baseYear'/BartikInst`baseYear'-`endYear'", replace
