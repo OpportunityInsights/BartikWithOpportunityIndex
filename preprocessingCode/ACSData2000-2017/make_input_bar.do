@@ -6,7 +6,7 @@ set matsize 10000
 
 local delta 1
 
-global home "/n/scratchlfs02/chetty_lab/Bartik/ACS2000-2017"
+global home "$SCRATCH/chetty_lab/Bartik/ACS2000-2017" // $SCRATCH is set to point to the current scratch 90 day storage location
 
 local cutVariables czone  ageDecile educ_coll_lt4yrs educ_coll_4yrs
 
