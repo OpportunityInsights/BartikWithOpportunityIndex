@@ -14,6 +14,7 @@ local geographies = "czone"												//Set geographies to use (puma, statefip,
 local geo = "czone"
 local switch = "CZone"
 
+global SCRATCH = "/n/holyscratch01"
 global main = "$SCRATCH/chetty_lab/Bartik/ACS2000-2017" //$SCRATCH is defined on the harvard RC server to point to the current temp (90-day) storage location
 
 
